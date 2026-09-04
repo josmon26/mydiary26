@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Diary & Scheduler</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #faf6ef;
+    --cream2: #f3ede2;
+    --cream3: #ede5d5;
+    --margin-color: #c9a96e;
+    --margin-line: #e8c99a;
+    --rule-color: #ddd4c0;
+    --ink: #2c2416;
+    --ink2: #5a4e3a;
+    --ink3: #8a7d65;
+    --red-line: #c0392b;
+    --accent: #8b5e3c;
+    --accent2: #c9813a;
+    --blue-ink: #2c5f8a;
+    --green: #3a7a4a;
+    --purple: #6a3a8a;
+    --shadow: rgba(0,0,0,0.12);
+    --margin-width: 62px;
+    --row-height: 44px;
+  }
+
+  .dark {
+    --cream: #1a1710;
+    --cream2: #211e16;
+    --cream3: #2a261c;
+    --margin-color: #7a5a2e;
+    --margin-line: #5a4520;
+    --rule-color: #3a3428;
+    --ink: #e8dfc8;
+    --ink2: #c8b898;
+    --ink3: #8a7d65;
+    --red-line: #c0392b;
+    --accent: #c9813a;
+    --accent2: #e8a855;
+    --blue-ink: #5a9fd4;
+    --shadow: rgba(0,0,0,0.4);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'Crimson Pro', serif;
+    background: var(--cream3);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── TOP BAR ── */
+  #topbar {
+    background: var(--ink);
+    color: var(--cream);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 18px;
+    gap: 10px;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px var(--shadow);
+  }
+
+  #title-group {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+  }
+
+  #brand-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 3.5px;
+    color: #e8a855;
+    font-weight: 400;
+    text-transform: uppercase;
+  }
+
+  #app-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    font-style: italic;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+
+  /* ── FOOTER ── */
+  #app-footer {
+    background: var(--ink);
+    color: rgba(255,255,255,0.28);
+    text-align: center;
+    padding: 10px 18px;
+    font-size: 0.7rem;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.4px;
+    line-height: 1.7;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  #app-footer span {
+    color: #e8a855;
+    font-weight: 600;
+  }
+
+  #date-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .nav-btn {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: var(--cream);
+    border-radius: 6px;
+    padding: 5px 12px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.2s;
+  }
+  .nav-btn:hover { background: rgba(255,255,255,0.22); }
+
+  #date-display {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.08);
+    white-space: nowrap;
+    transition: background 0.2s;
+  }
+  #date-display:hover { background: rgba(255,255,255,0.18); }
+
+  #today-btn {
+    background: var(--accent2);
+    border: none;
+    color: #fff;
+    border-radius: 6px;
+    padding: 5px 12px;
+    cursor: pointer;
+    font-family: 'Crimson Pro', serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: opacity 0.2s;
+  }
+  #today-btn:hover { opacity: 0.85; }
+
+  #topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .icon-btn {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: var(--cream);
+    border-radius: 6px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .icon-btn:hover { background: rgba(255,255,255,0.22); }
+
+  /* ── MOOD BAR ── */
+  #mood-bar {
+    background: var(--cream2);
+    border-bottom: 1px solid var(--cream3);
+    padding: 8px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  #mood-label {
+    font-size: 0.85rem;
+    color: var(--ink3);
+    font-style: italic;
+  }
+
+  .mood-opt {
+    font-size: 1.3rem;
+    cursor: pointer;
+    border-radius: 50%;
+    padding: 2px 4px;
+    transition: transform 0.15s, background 0.15s;
+    border: 2px solid transparent;
+  }
+  .mood-opt:hover { transform: scale(1.25); }
+  .mood-opt.selected { border-color: var(--accent); background: rgba(139,94,60,0.12); }
+
+  #streak-info {
+    margin-left: auto;
+    font-size: 0.82rem;
+    color: var(--ink3);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  /* ── MAIN DIARY PAGE ── */
+  #page-wrap {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    padding: 20px 10px 40px;
+  }
+
+  #diary-page {
+    width: 100%;
+    max-width: 860px;
+    background: var(--cream);
+    border-radius: 4px;
+    box-shadow: 3px 3px 20px var(--shadow), -1px -1px 8px rgba(0,0,0,0.05);
+    position: relative;
+    overflow: hidden;
+  }
+
+  #diary-page::before {
+    content: '';
+    position: absolute;
+    left: var(--margin-width);
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--red-line);
+    opacity: 0.5;
+    z-index: 1;
+  }
+
+  #page-header {
+    padding: 18px 18px 10px;
+    border-bottom: 2px solid var(--rule-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  #page-date-big {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--ink);
+    padding-left: calc(var(--margin-width) + 12px);
+  }
+
+  #page-date-big span {
+    font-style: italic;
+    color: var(--ink3);
+    font-size: 1rem;
+    margin-left: 8px;
+  }
+
+  #add-row-btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    padding: 5px 16px;
+    cursor: pointer;
+    font-family: 'Crimson Pro', serif;
+    font-size: 0.95rem;
+    transition: opacity 0.2s;
+  }
+  #add-row-btn:hover { opacity: 0.82; }
+
+  #rows-container { position: relative; }
+
+  .diary-row {
+    display: flex;
+    align-items: stretch;
+    border-bottom: 1px solid var(--rule-color);
+    min-height: var(--row-height);
+    position: relative;
+    transition: background 0.15s;
+  }
+  .diary-row:hover { background: rgba(201,169,110,0.04); }
+
+  .row-margin {
+    width: var(--margin-width);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    background: rgba(201,169,110,0.08);
+    position: relative;
+    z-index: 2;
+  }
+
+  .row-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--ink3);
+    opacity: 0.6;
+    position: absolute;
+    left: 4px;
+    top: 4px;
+  }
+
+  .margin-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.95rem;
+    padding: 2px;
+    border-radius: 4px;
+    transition: background 0.15s;
+    line-height: 1;
+  }
+  .margin-btn:hover { background: rgba(139,94,60,0.15); }
+
+  .row-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 4px 10px 4px 12px;
+    min-width: 0;
+  }
+
+  .row-input {
+    border: none;
+    background: transparent;
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.05rem;
+    color: var(--ink);
+    width: 100%;
+    resize: none;
+    outline: none;
+    line-height: 1.5;
+    min-height: 32px;
+    padding: 4px 0;
+  }
+  .row-input::placeholder { color: var(--ink3); opacity: 0.5; font-style: italic; }
+
+  .sched-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.72rem;
+    font-family: 'DM Mono', monospace;
+    padding: 2px 7px;
+    border-radius: 10px;
+    margin-top: 2px;
+    margin-bottom: 3px;
+    width: fit-content;
+  }
+  .sched-badge.daily   { background: rgba(44,95,138,0.12); color: var(--blue-ink); border: 1px solid rgba(44,95,138,0.25); }
+  .sched-badge.weekly  { background: rgba(58,122,74,0.12); color: var(--green); border: 1px solid rgba(58,122,74,0.25); }
+  .sched-badge.monthly { background: rgba(106,58,138,0.12); color: var(--purple); border: 1px solid rgba(106,58,138,0.25); }
+  .sched-badge.yearly  { background: rgba(192,57,43,0.12); color: var(--red-line); border: 1px solid rgba(192,57,43,0.25); }
+
+  /* ── MODALS ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--cream);
+    border-radius: 10px;
+    padding: 24px 28px;
+    width: 90%;
+    max-width: 420px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: var(--ink);
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule-color);
+  }
+
+  .modal label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--ink3);
+    margin-bottom: 4px;
+    margin-top: 12px;
+    font-style: italic;
+  }
+
+  .modal input, .modal select, .modal textarea {
+    width: 100%;
+    border: 1px solid var(--cream3);
+    border-radius: 6px;
+    padding: 7px 10px;
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+    color: var(--ink);
+    background: var(--cream2);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .modal input:focus, .modal select:focus, .modal textarea:focus {
+    border-color: var(--accent);
+  }
+
+  .modal-btns {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    justify-content: flex-end;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 7px 20px;
+    cursor: pointer;
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: opacity 0.2s;
+  }
+  .btn-primary:hover { opacity: 0.85; }
+
+  .btn-secondary {
+    background: var(--cream3);
+    color: var(--ink2);
+    border: 1px solid var(--rule-color);
+    border-radius: 6px;
+    padding: 7px 16px;
+    cursor: pointer;
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+    transition: background 0.2s;
+  }
+  .btn-secondary:hover { background: var(--cream2); }
+
+  .btn-danger {
+    background: #c0392b;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 7px 16px;
+    cursor: pointer;
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+    transition: opacity 0.2s;
+  }
+  .btn-danger:hover { opacity: 0.85; }
+
+  .modal-close {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 1.3rem;
+    cursor: pointer;
+    color: var(--ink3);
+    line-height: 1;
+  }
+
+  .stype-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+
+  .stype-btn {
+    border: 1px solid var(--cream3);
+    background: var(--cream2);
+    color: var(--ink2);
+    border-radius: 20px;
+    padding: 4px 14px;
+    cursor: pointer;
+    font-family: 'Crimson Pro', serif;
+    font-size: 0.92rem;
+    transition: all 0.15s;
+  }
+  .stype-btn.active { border-color: var(--accent); background: var(--accent); color: #fff; }
+
+  /* ── SEARCH PANEL ── */
+  #search-panel {
+    display: none;
+    position: fixed;
+    top: 60px;
+    right: 16px;
+    width: 320px;
+    background: var(--cream);
+    border-radius: 10px;
+    box-shadow: 0 6px 30px var(--shadow);
+    z-index: 200;
+    padding: 16px;
+    border: 1px solid var(--cream3);
+  }
+  #search-panel.open { display: block; }
+
+  #search-input {
+    width: 100%;
+    border: 1px solid var(--cream3);
+    border-radius: 6px;
+    padding: 7px 10px;
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+    background: var(--cream2);
+    color: var(--ink);
+    outline: none;
+  }
+  #search-input:focus { border-color: var(--accent); }
+
+  #search-results {
+    margin-top: 10px;
+    max-height: 260px;
+    overflow-y: auto;
+  }
+
+  .search-result-item {
+    padding: 8px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--cream3);
+    transition: background 0.15s;
+  }
+  .search-result-item:hover { background: var(--cream2); }
+
+  .sri-date { font-size: 0.75rem; color: var(--ink3); font-family: 'DM Mono', monospace; }
+  .sri-text { font-size: 0.95rem; color: var(--ink); margin-top: 2px; }
+  mark { background: rgba(201,169,110,0.4); border-radius: 2px; }
+
+  /* ── CALENDAR PANEL ── */
+  #cal-panel {
+    display: none;
+    position: fixed;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 320px;
+    background: var(--cream);
+    border-radius: 10px;
+    box-shadow: 0 6px 30px var(--shadow);
+    z-index: 200;
+    padding: 16px;
+    border: 1px solid var(--cream3);
+  }
+  #cal-panel.open { display: block; }
+
+  #cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  #cal-title { font-family: 'Playfair Display', serif; font-size: 1rem; }
+
+  .cal-nav {
+    background: none; border: none; cursor: pointer;
+    font-size: 1.1rem; color: var(--ink2); padding: 2px 6px; border-radius: 4px;
+  }
+  .cal-nav:hover { background: var(--cream3); }
+
+  #cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+
+  .cal-dow { text-align: center; font-size: 0.7rem; color: var(--ink3); font-family: 'DM Mono', monospace; padding-bottom: 4px; }
+
+  .cal-day {
+    text-align: center; font-size: 0.85rem; padding: 5px 0;
+    border-radius: 50%; cursor: pointer; position: relative;
+    transition: background 0.15s; aspect-ratio: 1;
+    display: flex; align-items: center; justify-content: center; flex-direction: column;
+  }
+  .cal-day:hover { background: var(--cream3); }
+  .cal-day.today { font-weight: 700; color: var(--accent2); }
+  .cal-day.has-entry::after {
+    content: ''; display: block; width: 4px; height: 4px;
+    background: var(--accent); border-radius: 50%;
+    position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%);
+  }
+  .cal-day.selected { background: var(--accent); color: #fff; }
+  .cal-day.other-month { opacity: 0.3; }
+
+  /* ── PIN LOCK ── */
+  #lock-screen {
+    display: none; position: fixed; inset: 0; background: var(--ink);
+    z-index: 1000; align-items: center; justify-content: center;
+    flex-direction: column; gap: 20px;
+  }
+  #lock-screen.open { display: flex; }
+
+  #lock-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--cream); font-style: italic; }
+
+  #pin-dots { display: flex; gap: 12px; }
+
+  .pin-dot {
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 2px solid var(--cream); background: transparent; transition: background 0.15s;
+  }
+  .pin-dot.filled { background: var(--cream); }
+
+  #pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 220px; }
+
+  .pin-key {
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+    color: var(--cream); border-radius: 8px; padding: 14px; cursor: pointer;
+    font-size: 1.2rem; font-family: 'DM Mono', monospace; text-align: center; transition: background 0.15s;
+  }
+  .pin-key:hover { background: rgba(255,255,255,0.2); }
+
+  #pin-error { color: #e74c3c; font-size: 0.9rem; font-style: italic; min-height: 20px; }
+
+  /* ── WORD COUNT ── */
+  #wc-bar {
+    background: var(--cream2);
+    border-top: 1px solid var(--rule-color);
+    padding: 5px 18px;
+    font-size: 0.78rem;
+    color: var(--ink3);
+    display: flex;
+    gap: 16px;
+    font-family: 'DM Mono', monospace;
+    flex-wrap: wrap;
+  }
+
+  /* ── PHOTO ── */
+  .row-photo { max-height: 120px; max-width: 200px; border-radius: 6px; margin: 4px 0; object-fit: cover; cursor: pointer; }
+
+  /* ── TOAST ── */
+  #toast {
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(40px);
+    background: var(--ink); color: var(--cream);
+    padding: 9px 22px; border-radius: 20px; font-size: 0.92rem;
+    opacity: 0; transition: all 0.3s; pointer-events: none; z-index: 800; white-space: nowrap;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ── DELETE OPTIONS ── */
+  #del-opts-modal .del-opt-btn {
+    display: block; width: 100%; text-align: left;
+    background: var(--cream2); border: 1px solid var(--cream3);
+    border-radius: 7px; padding: 10px 14px; margin-bottom: 8px;
+    cursor: pointer; font-family: 'Crimson Pro', serif; font-size: 1rem;
+    color: var(--ink); transition: background 0.15s;
+  }
+  #del-opts-modal .del-opt-btn:hover { background: var(--cream3); }
+  #del-opts-modal .del-opt-btn.danger { color: #c0392b; border-color: rgba(192,57,43,0.3); }
+
+  /* ── SETTINGS ── */
+  .settings-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 0; border-bottom: 1px solid var(--rule-color);
+  }
+  .settings-row label { margin: 0; font-style: normal; font-size: 0.95rem; color: var(--ink2); }
+
+  .toggle { position: relative; width: 42px; height: 24px; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider {
+    position: absolute; inset: 0; background: var(--cream3);
+    border-radius: 24px; transition: background 0.2s; cursor: pointer;
+  }
+  .toggle-slider::before {
+    content: ''; position: absolute; width: 18px; height: 18px;
+    left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: transform 0.2s;
+  }
+  .toggle input:checked + .toggle-slider { background: var(--accent); }
+  .toggle input:checked + .toggle-slider::before { transform: translateX(18px); }
+
+  .row-from-recurring { border-left: 3px solid var(--accent2); }
+
+  /* ── LIGHTBOX ── */
+  #lightbox {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85); z-index: 900;
+    align-items: center; justify-content: center; cursor: zoom-out;
+  }
+  #lightbox.open { display: flex; }
+  #lightbox img { max-width: 90vw; max-height: 90vh; border-radius: 8px; box-shadow: 0 0 40px rgba(0,0,0,0.5); }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--cream3); border-radius: 3px; }
+
+  #hidden-date-picker { position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0; }
+
+  @media (max-width: 600px) {
+    :root { --margin-width: 48px; }
+    #topbar { padding: 8px 10px; }
+    .modal { padding: 18px 16px; }
+    #search-panel, #cal-panel { width: calc(100vw - 20px); right: 10px; left: 10px; transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- PIN LOCK -->
+<div id="lock-screen">
+  <div id="lock-title">My Diary</div>
+  <div id="pin-dots">
+    <div class="pin-dot" id="pd0"></div>
+    <div class="pin-dot" id="pd1"></div>
+    <div class="pin-dot" id="pd2"></div>
+    <div class="pin-dot" id="pd3"></div>
+  </div>
+  <div id="pin-pad">
+    <button class="pin-key" onclick="pinPress('1')">1</button>
+    <button class="pin-key" onclick="pinPress('2')">2</button>
+    <button class="pin-key" onclick="pinPress('3')">3</button>
+    <button class="pin-key" onclick="pinPress('4')">4</button>
+    <button class="pin-key" onclick="pinPress('5')">5</button>
+    <button class="pin-key" onclick="pinPress('6')">6</button>
+    <button class="pin-key" onclick="pinPress('7')">7</button>
+    <button class="pin-key" onclick="pinPress('8')">8</button>
+    <button class="pin-key" onclick="pinPress('9')">9</button>
+    <button class="pin-key" onclick="pinPress('⌫')">⌫</button>
+    <button class="pin-key" onclick="pinPress('0')">0</button>
+    <button class="pin-key" onclick="pinPress('✓')" style="background:rgba(139,94,60,0.4)">✓</button>
+  </div>
+  <div id="pin-error"></div>
+</div>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <div id="title-group">
+    <div id="brand-name">JOSEMON'S</div>
+    <div id="app-title">✦ My Diary & Scheduler</div>
+  </div>
+  <div id="date-nav">
+    <button class="nav-btn" onclick="changeDay(-1)">‹</button>
+    <div id="date-display" onclick="toggleCal()">—</div>
+    <button class="nav-btn" onclick="changeDay(1)">›</button>
+    <button id="today-btn" onclick="goToday()">Today</button>
+  </div>
+  <div id="topbar-right">
+    <button class="icon-btn" onclick="toggleSearch()" title="Search">🔍</button>
+    <button class="icon-btn" onclick="openExport()" title="Export">⬇ Export</button>
+    <button class="icon-btn" onclick="openSettings()" title="Settings">⚙</button>
+  </div>
+</div>
+
+<!-- MOOD BAR -->
+<div id="mood-bar">
+  <span id="mood-label">Today's mood:</span>
+  <span class="mood-opt" data-mood="😊" onclick="setMood('😊')">😊</span>
+  <span class="mood-opt" data-mood="😐" onclick="setMood('😐')">😐</span>
+  <span class="mood-opt" data-mood="😔" onclick="setMood('😔')">😔</span>
+  <span class="mood-opt" data-mood="😤" onclick="setMood('😤')">😤</span>
+  <span class="mood-opt" data-mood="🤒" onclick="setMood('🤒')">🤒</span>
+  <span class="mood-opt" data-mood="😴" onclick="setMood('😴')">😴</span>
+  <span class="mood-opt" data-mood="🎉" onclick="setMood('🎉')">🎉</span>
+  <div id="streak-info">🔥 <span id="streak-count">0</span> day streak</div>
+</div>
+
+<!-- MAIN DIARY PAGE -->
+<div id="page-wrap">
+  <div id="diary-page">
+    <div id="page-header">
+      <div id="page-date-big">Loading...</div>
+      <button id="add-row-btn" onclick="addRow()">+ Add Row</button>
+    </div>
+    <div id="rows-container"></div>
+  </div>
+</div>
+
+<!-- WORD COUNT BAR -->
+<div id="wc-bar">
+  <span>Words: <span id="wc-words">0</span></span>
+  <span>Chars: <span id="wc-chars">0</span></span>
+  <span>Rows: <span id="wc-rows">0</span></span>
+</div>
+
+<!-- FOOTER -->
+<div id="app-footer">
+  © 2026 <span>JOSEMON'S</span>. All rights reserved.<br>
+  Personal Use License. Redistribution and unauthorized resale prohibited.
+</div>
+
+<!-- HIDDEN DATE PICKER -->
+<input type="date" id="hidden-date-picker" onchange="jumpToDate(this.value)">
+
+<!-- SEARCH PANEL -->
+<div id="search-panel">
+  <input type="text" id="search-input" placeholder="Search entries…" oninput="doSearch(this.value)">
+  <div id="search-results"></div>
+</div>
+
+<!-- CALENDAR PANEL -->
+<div id="cal-panel">
+  <div id="cal-header">
+    <button class="cal-nav" onclick="calChangeMonth(-1)">‹</button>
+    <div id="cal-title"></div>
+    <button class="cal-nav" onclick="calChangeMonth(1)">›</button>
+  </div>
+  <div id="cal-grid"></div>
+</div>
+
+<!-- SCHEDULE MODAL -->
+<div class="modal-overlay" id="sched-modal-overlay">
+  <div class="modal" id="sched-modal">
+    <button class="modal-close" onclick="closeModal('sched-modal-overlay')">×</button>
+    <h2 id="sched-modal-title">Add Schedule</h2>
+
+    <label>Description</label>
+    <input type="text" id="sched-desc" placeholder="e.g. Present cheque of J/235" autocomplete="off">
+
+    <label>Schedule Type</label>
+    <div class="stype-row">
+      <button class="stype-btn active" data-type="daily" onclick="selectSType('daily')">Daily</button>
+      <button class="stype-btn" data-type="weekly" onclick="selectSType('weekly')">Weekly</button>
+      <button class="stype-btn" data-type="monthly" onclick="selectSType('monthly')">Monthly</button>
+      <button class="stype-btn" data-type="yearly" onclick="selectSType('yearly')">Yearly</button>
+    </div>
+
+    <div id="daily-opts">
+      <label>Repeat every N days</label>
+      <input type="number" id="sched-interval" value="1" min="1" max="365" placeholder="1 = every day, 2 = every other day">
+    </div>
+
+    <div id="weekly-opts" style="display:none">
+      <label>Day of Week</label>
+      <select id="sched-dow">
+        <option value="0">Sunday</option>
+        <option value="1">Monday</option>
+        <option value="2">Tuesday</option>
+        <option value="3">Wednesday</option>
+        <option value="4">Thursday</option>
+        <option value="5">Friday</option>
+        <option value="6">Saturday</option>
+      </select>
+    </div>
+
+    <div id="monthly-opts" style="display:none">
+      <label>Day of Month (1–31)</label>
+      <input type="number" id="sched-dom" value="1" min="1" max="31">
+    </div>
+
+    <div id="yearly-opts" style="display:none">
+      <label>Date (Month & Day)</label>
+      <input type="date" id="sched-yearly-date">
+    </div>
+
+    <label>Start Date</label>
+    <input type="date" id="sched-start">
+
+    <label>End Date (optional)</label>
+    <input type="date" id="sched-end">
+
+    <div class="modal-btns">
+      <button class="btn-secondary" onclick="closeModal('sched-modal-overlay')">Cancel</button>
+      <button class="btn-primary" onclick="saveSchedule()">Save Schedule</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE OPTIONS MODAL -->
+<div class="modal-overlay" id="del-opts-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('del-opts-modal')">×</button>
+    <h2>Delete Entry</h2>
+    <p style="font-size:0.9rem;color:var(--ink3);margin-bottom:12px;font-style:italic;">This row has a recurring schedule. What would you like to delete?</p>
+    <button class="del-opt-btn" onclick="delChoice('this')">Delete only this occurrence</button>
+    <button class="del-opt-btn danger" onclick="delChoice('all')">Delete all events in series</button>
+    <button class="del-opt-btn" onclick="closeModal('del-opts-modal')">Cancel</button>
+  </div>
+</div>
+
+<!-- EXPORT MODAL -->
+<div class="modal-overlay" id="export-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('export-modal')">×</button>
+    <h2>Export Diary</h2>
+    <label>Export Range</label>
+    <select id="export-range">
+      <option value="today">Today only</option>
+      <option value="week">This week</option>
+      <option value="month">This month</option>
+      <option value="all">All entries</option>
+    </select>
+    <div class="modal-btns">
+      <button class="btn-secondary" onclick="closeModal('export-modal')">Cancel</button>
+      <button class="btn-primary" onclick="doExport('txt')">Export as .txt</button>
+      <button class="btn-primary" onclick="doExport('html')">Export as HTML</button>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('settings-modal')">×</button>
+    <h2>Settings</h2>
+    <div class="settings-row">
+      <label>Dark Mode</label>
+      <label class="toggle">
+        <input type="checkbox" id="dark-toggle" onchange="toggleDark(this.checked)">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <div class="settings-row">
+      <label>PIN Lock</label>
+      <label class="toggle">
+        <input type="checkbox" id="pin-toggle" onchange="togglePin(this.checked)">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <div id="pin-setup-area" style="display:none;">
+      <label>Set 4-digit PIN</label>
+      <input type="password" id="pin-set-input" maxlength="4" placeholder="Enter 4 digits" inputmode="numeric">
+      <button class="btn-primary" style="margin-top:8px;width:100%;" onclick="savePin()">Save PIN</button>
+    </div>
+    <div class="settings-row" style="margin-top:8px;">
+      <label>Clear all data</label>
+      <button class="btn-danger" onclick="clearAllData()" style="padding:5px 12px;font-size:0.85rem;">Clear</button>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" onclick="closeLightbox()">
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+let currentDate = new Date();
+currentDate.setHours(0,0,0,0);
+let calViewMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+let entries  = {};
+let schedules= {};
+let moods    = {};
+let settings = { dark: false, pinEnabled: false, pin: '' };
+let streak   = 0;
+let editingRowId   = null;
+let delTargetRow   = null;
+let delTargetDate  = null;
+let schedModalMode = 'add';
+let activeSType    = 'daily';
+
+function save() {
+  localStorage.setItem('ds_entries',   JSON.stringify(entries));
+  localStorage.setItem('ds_schedules', JSON.stringify(schedules));
+  localStorage.setItem('ds_moods',     JSON.stringify(moods));
+  localStorage.setItem('ds_settings',  JSON.stringify(settings));
+}
+
+function load() {
+  entries   = JSON.parse(localStorage.getItem('ds_entries')   || '{}');
+  schedules = JSON.parse(localStorage.getItem('ds_schedules') || '{}');
+  moods     = JSON.parse(localStorage.getItem('ds_moods')     || '{}');
+  settings  = JSON.parse(localStorage.getItem('ds_settings')  || '{}');
+  settings  = Object.assign({ dark:false, pinEnabled:false, pin:'' }, settings);
+}
+
+function dateStr(d) { return d.toISOString().slice(0,10); }
+function parseDate(s) { const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+function computeStreak() {
+  let s = 0;
+  let d = new Date(); d.setHours(0,0,0,0);
+  while (true) {
+    const ds = dateStr(d);
+    const has = (entries[ds] && entries[ds].some(r => r.text.trim())) || moods[ds];
+    if (!has) break;
+    s++;
+    d.setDate(d.getDate() - 1);
+  }
+  streak = s;
+  document.getElementById('streak-count').textContent = s;
+}
+
+function scheduleOccursOn(sch, ds) {
+  if (sch.deleted) return false;
+  const d = parseDate(ds), start = parseDate(sch.start);
+  if (d < start) return false;
+  if (sch.end && d > parseDate(sch.end)) return false;
+  if (sch.deletedOccurrences && sch.deletedOccurrences.includes(ds)) return false;
+  if (sch.type === 'daily') {
+    const diff = Math.round((d - start) / 86400000);
+    return diff % (sch.interval || 1) === 0;
+  }
+  if (sch.type === 'weekly')  return d.getDay() === parseInt(sch.dow);
+  if (sch.type === 'monthly') return d.getDate() === parseInt(sch.dom);
+  if (sch.type === 'yearly') {
+    const [,mm,dd] = sch.yearlyMD.split('-');
+    return d.getMonth()+1 === parseInt(mm) && d.getDate() === parseInt(dd);
+  }
+  return false;
+}
+
+function getRecurringRowsForDate(ds) {
+  const rows = [];
+  for (const id in schedules) {
+    const sch = schedules[id];
+    if (!scheduleOccursOn(sch, ds)) continue;
+    const alreadyIn = entries[ds] && entries[ds].some(r => r.scheduleId === id);
+    if (!alreadyIn) {
+      rows.push({ id: uid()+'_r', text: sch.text, photo: null, scheduleId: id, fromRecurring: true });
+    }
+  }
+  return rows;
+}
+
+function renderPage() {
+  const ds = dateStr(currentDate);
+  document.getElementById('date-display').textContent = currentDate.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+  document.getElementById('page-date-big').innerHTML =
+    `<span style="font-style:normal">${currentDate.toLocaleDateString('en-US',{weekday:'long'})},</span> ${currentDate.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}`;
+
+  const savedMood = moods[ds] || '';
+  document.querySelectorAll('.mood-opt').forEach(el => el.classList.toggle('selected', el.dataset.mood === savedMood));
+
+  if (!entries[ds]) entries[ds] = [];
+  while (entries[ds].length < 12) entries[ds].push({ id: uid(), text: '', photo: null, scheduleId: null });
+
+  const recurring = getRecurringRowsForDate(ds);
+  const allRows   = [...recurring, ...entries[ds]];
+  const container = document.getElementById('rows-container');
+  container.innerHTML = '';
+  allRows.forEach((row, idx) => renderRow(container, row, idx, ds));
+
+  setTimeout(() => {
+    document.querySelectorAll('.row-input').forEach(ta => autoResize(ta));
+  }, 0);
+
+  updateWordCount();
+  computeStreak();
+}
+
+function renderRow(container, row, idx, ds) {
+  const sch = row.scheduleId ? schedules[row.scheduleId] : null;
+  const div = document.createElement('div');
+  div.className = 'diary-row' + (row.fromRecurring ? ' row-from-recurring' : '');
+  div.dataset.rowId = row.id;
+  div.dataset.ds    = ds;
+
+  const margin = document.createElement('div');
+  margin.className = 'row-margin';
+  margin.innerHTML = `<span class="row-num">${idx+1}</span>`;
+
+  const btnSch = document.createElement('button');
+  btnSch.className = 'margin-btn';
+  btnSch.title = sch ? 'Edit Schedule' : 'Add Schedule';
+  btnSch.textContent = sch ? '📅' : '＋';
+  btnSch.onclick = () => openSchedModal(row, ds);
+  margin.appendChild(btnSch);
+
+  const btnMenu = document.createElement('button');
+  btnMenu.className = 'margin-btn';
+  btnMenu.title = 'Options';
+  btnMenu.textContent = '⋯';
+  btnMenu.onclick = (e) => openRowMenu(e, row, ds);
+  margin.appendChild(btnMenu);
+
+  div.appendChild(margin);
+
+  const content = document.createElement('div');
+  content.className = 'row-content';
+
+  if (row.photo) {
+    const img = document.createElement('img');
+    img.src = row.photo;
+    img.className = 'row-photo';
+    img.onclick = () => openLightbox(row.photo);
+    content.appendChild(img);
+  }
+
+  const ta = document.createElement('textarea');
+  ta.className = 'row-input';
+  ta.value = row.text;
+  ta.placeholder = idx === 0 ? 'Write here…' : '';
+  ta.rows = 1;
+  ta.oninput = function() {
+    autoResize(this);
+    updateRowText(row, ds, this.value);
+    updateWordCount();
+  };
+  ta.onpaste = function(e) {
+    for (const item of e.clipboardData.items) {
+      if (item.type.startsWith('image/')) {
+        e.preventDefault();
+        const reader = new FileReader();
+        reader.onload = function(ev) { row.photo = ev.target.result; save(); renderPage(); };
+        reader.readAsDataURL(item.getAsFile());
+      }
+    }
+  };
+  autoResize(ta);
+  content.appendChild(ta);
+
+  if (sch) {
+    const badge = document.createElement('div');
+    badge.className = `sched-badge ${sch.type}`;
+    const labels = {
+      daily:   `🔁 Every ${sch.interval>1?sch.interval+' days':'day'}`,
+      weekly:  `🗓 Every ${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][sch.dow]}`,
+      monthly: `📆 Monthly on ${sch.dom}${ordinal(sch.dom)}`,
+      yearly:  `🎯 Yearly on ${sch.yearlyMD ? formatMD(sch.yearlyMD) : ''}`
+    };
+    badge.textContent = labels[sch.type] || sch.type;
+    content.appendChild(badge);
+  }
+
+  div.appendChild(content);
+  container.appendChild(div);
+}
+
+function ordinal(n) { const s=['th','st','nd','rd'],v=n%100; return s[(v-20)%10]||s[v]||s[0]; }
+function formatMD(ymd) {
+  const [,m,d] = ymd.split('-');
+  return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(m)-1] + ' ' + parseInt(d);
+}
+function autoResize(ta) { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px'; }
+
+function updateRowText(row, ds, text) {
+  if (row.fromRecurring) {
+    const newRow = { id: uid(), text, photo: row.photo, scheduleId: row.scheduleId };
+    if (!entries[ds]) entries[ds] = [];
+    entries[ds].push(newRow);
+    row.id = newRow.id;
+    row.fromRecurring = false;
+  } else {
+    const existing = entries[ds].find(r => r.id === row.id);
+    if (existing) existing.text = text;
+  }
+  save();
+}
+
+function addRow() {
+  const ds = dateStr(currentDate);
+  if (!entries[ds]) entries[ds] = [];
+  entries[ds].push({ id: uid(), text: '', photo: null, scheduleId: null });
+  save();
+  renderPage();
+  setTimeout(() => {
+    const tas = document.querySelectorAll('.row-input');
+    if (tas.length) tas[tas.length-1].focus();
+  }, 50);
+}
+
+let ctxMenu = null;
+function openRowMenu(e, row, ds) {
+  e.stopPropagation();
+  removeCtxMenu();
+  const menu = document.createElement('div');
+  menu.style.cssText = `position:fixed;background:var(--cream);border:1px solid var(--cream3);border-radius:8px;box-shadow:0 4px 20px var(--shadow);z-index:400;padding:6px;min-width:170px;`;
+  menu.style.left = Math.min(e.clientX, window.innerWidth - 180) + 'px';
+  menu.style.top  = Math.min(e.clientY, window.innerHeight - 200) + 'px';
+  const opts = [
+    { label: '📎 Attach Photo', fn: () => attachPhoto(row, ds) },
+    { label: '✏️ Edit Schedule', fn: () => openSchedModal(row, ds), cond: !!row.scheduleId },
+    { label: '🗑 Delete Row',    fn: () => deleteRow(row, ds), danger: true },
+  ];
+  opts.forEach(opt => {
+    if ('cond' in opt && !opt.cond) return;
+    const btn = document.createElement('button');
+    btn.style.cssText = `display:block;width:100%;text-align:left;background:none;border:none;padding:8px 12px;cursor:pointer;font-family:'Crimson Pro',serif;font-size:0.95rem;color:${opt.danger?'#c0392b':'var(--ink)'};border-radius:5px;`;
+    btn.textContent = opt.label;
+    btn.onmouseover = () => btn.style.background = 'var(--cream2)';
+    btn.onmouseleave = () => btn.style.background = 'none';
+    btn.onclick = () => { removeCtxMenu(); opt.fn(); };
+    menu.appendChild(btn);
+  });
+  document.body.appendChild(menu);
+  ctxMenu = menu;
+  setTimeout(() => document.addEventListener('click', removeCtxMenu, { once: true }), 10);
+}
+
+function removeCtxMenu() { if (ctxMenu) { ctxMenu.remove(); ctxMenu = null; } }
+
+function attachPhoto(row, ds) {
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'image/*';
+  inp.onchange = function() {
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      if (row.fromRecurring) {
+        entries[ds].push({ id: uid(), text: row.text, photo: ev.target.result, scheduleId: row.scheduleId });
+        row.fromRecurring = false;
+      } else {
+        const ex = entries[ds].find(r => r.id === row.id);
+        if (ex) ex.photo = ev.target.result;
+      }
+      save(); renderPage();
+    };
+    reader.readAsDataURL(this.files[0]);
+  };
+  inp.click();
+}
+
+function deleteRow(row, ds) {
+  if (row.scheduleId && schedules[row.scheduleId]) {
+    delTargetRow = row; delTargetDate = ds; openModal('del-opts-modal');
+  } else {
+    entries[ds] = (entries[ds] || []).filter(r => r.id !== row.id);
+    while (entries[ds].length < 12) entries[ds].push({ id: uid(), text:'', photo:null, scheduleId:null });
+    save(); renderPage();
+  }
+}
+
+function delChoice(mode) {
+  closeModal('del-opts-modal');
+  const row = delTargetRow, ds = delTargetDate;
+  if (!row || !ds) return;
+  if (mode === 'all') {
+    if (schedules[row.scheduleId]) schedules[row.scheduleId].deleted = true;
+  } else {
+    if (schedules[row.scheduleId]) {
+      if (!schedules[row.scheduleId].deletedOccurrences) schedules[row.scheduleId].deletedOccurrences = [];
+      schedules[row.scheduleId].deletedOccurrences.push(ds);
+    }
+  }
+  entries[ds] = (entries[ds] || []).filter(r => r.id !== row.id);
+  while ((entries[ds]||[]).length < 12) entries[ds].push({ id: uid(), text:'', photo:null, scheduleId:null });
+  save(); renderPage();
+  toast(mode === 'all' ? 'Deleted entire series.' : 'Deleted this occurrence.');
+}
+
+function openSchedModal(row, ds) {
+  editingRowId = row.id;
+  const existing = row.scheduleId ? schedules[row.scheduleId] : null;
+  document.getElementById('sched-modal-title').textContent = existing ? 'Edit Schedule' : 'Add Schedule';
+  document.getElementById('sched-desc').value     = existing?.text || row.text || '';
+  document.getElementById('sched-start').value    = ds;
+  document.getElementById('sched-end').value      = existing?.end || '';
+  document.getElementById('sched-interval').value = existing?.interval || 1;
+  document.getElementById('sched-dow').value      = existing?.dow ?? new Date().getDay();
+  document.getElementById('sched-dom').value      = existing?.dom ?? new Date().getDate();
+  document.getElementById('sched-yearly-date').value = existing?.yearlyMD || ds;
+  selectSType(existing?.type || 'daily');
+  schedModalMode = existing ? 'edit' : 'add';
+  openModal('sched-modal-overlay');
+  setTimeout(() => document.getElementById('sched-desc').focus(), 80);
+}
+
+function selectSType(type) {
+  activeSType = type;
+  document.querySelectorAll('.stype-btn').forEach(b => b.classList.toggle('active', b.dataset.type === type));
+  document.getElementById('daily-opts').style.display   = type === 'daily'   ? '' : 'none';
+  document.getElementById('weekly-opts').style.display  = type === 'weekly'  ? '' : 'none';
+  document.getElementById('monthly-opts').style.display = type === 'monthly' ? '' : 'none';
+  document.getElementById('yearly-opts').style.display  = type === 'yearly'  ? '' : 'none';
+}
+
+function saveSchedule() {
+  const ds  = dateStr(currentDate);
+  const row = entries[ds]?.find(r => r.id === editingRowId);
+  if (!row) { closeModal('sched-modal-overlay'); return; }
+
+  const desc = document.getElementById('sched-desc').value.trim();
+  if (!desc) { toast('Please enter a description for this schedule.'); return; }
+
+  const schId = row.scheduleId || uid();
+  const sch = {
+    id:       schId,
+    type:     activeSType,
+    interval: parseInt(document.getElementById('sched-interval').value) || 1,
+    dow:      parseInt(document.getElementById('sched-dow').value),
+    dom:      parseInt(document.getElementById('sched-dom').value),
+    yearlyMD: document.getElementById('sched-yearly-date').value,
+    start:    document.getElementById('sched-start').value || ds,
+    end:      document.getElementById('sched-end').value || null,
+    text:     desc,
+    deleted:  false,
+    deletedOccurrences: schedules[schId]?.deletedOccurrences || []
+  };
+
+  row.text       = desc;
+  schedules[schId] = sch;
+  row.scheduleId   = schId;
+  save();
+  closeModal('sched-modal-overlay');
+  renderPage();
+  toast('Schedule saved!');
+}
+
+function setMood(emoji) {
+  const ds = dateStr(currentDate);
+  moods[ds] = emoji; save();
+  document.querySelectorAll('.mood-opt').forEach(el => el.classList.toggle('selected', el.dataset.mood === emoji));
+  computeStreak();
+}
+
+function changeDay(delta) { currentDate.setDate(currentDate.getDate() + delta); renderPage(); }
+function goToday() { currentDate = new Date(); currentDate.setHours(0,0,0,0); renderPage(); }
+function jumpToDate(val) { if (!val) return; const [y,m,d] = val.split('-').map(Number); currentDate = new Date(y, m-1, d); renderPage(); }
+
+function toggleCal() {
+  const p = document.getElementById('cal-panel');
+  calViewMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+  renderCal();
+  p.classList.toggle('open');
+  document.getElementById('search-panel').classList.remove('open');
+}
+
+function renderCal() {
+  const year = calViewMonth.getFullYear(), mon = calViewMonth.getMonth();
+  document.getElementById('cal-title').textContent = calViewMonth.toLocaleDateString('en-US', { month:'long', year:'numeric' });
+  const grid = document.getElementById('cal-grid');
+  grid.innerHTML = ['Su','Mo','Tu','We','Th','Fr','Sa'].map(d => `<div class="cal-dow">${d}</div>`).join('');
+  const first = new Date(year, mon, 1), last = new Date(year, mon+1, 0);
+  const todayDs = dateStr(new Date()), selDs = dateStr(currentDate);
+  for (let i = 0; i < first.getDay(); i++) grid.insertAdjacentHTML('beforeend', '<div></div>');
+  for (let day = 1; day <= last.getDate(); day++) {
+    const d = new Date(year, mon, day), ds = dateStr(d);
+    const hasEntry = (entries[ds] && entries[ds].some(r => r.text.trim())) || moods[ds];
+    const cell = document.createElement('div');
+    cell.className = `cal-day${ds===todayDs?' today':''}${ds===selDs?' selected':''}${hasEntry?' has-entry':''}`;
+    cell.textContent = day;
+    cell.onclick = () => { jumpToDate(ds); document.getElementById('cal-panel').classList.remove('open'); };
+    grid.appendChild(cell);
+  }
+}
+
+function calChangeMonth(delta) { calViewMonth.setMonth(calViewMonth.getMonth() + delta); renderCal(); }
+
+function toggleSearch() {
+  const p = document.getElementById('search-panel');
+  p.classList.toggle('open');
+  document.getElementById('cal-panel').classList.remove('open');
+  if (p.classList.contains('open')) { document.getElementById('search-input').focus(); doSearch(''); }
+}
+
+function doSearch(q) {
+  const res = document.getElementById('search-results');
+  if (!q.trim()) { res.innerHTML = '<div style="color:var(--ink3);font-style:italic;font-size:0.85rem;padding:8px 0;">Start typing to search…</div>'; return; }
+  const results = [];
+  for (const ds in entries) {
+    entries[ds].forEach(row => {
+      if (!row.text.trim()) return;
+      if (row.text.toLowerCase().includes(q.toLowerCase())) results.push({ ds, text: row.text });
+    });
+  }
+  results.sort((a,b) => b.ds.localeCompare(a.ds));
+  if (!results.length) { res.innerHTML = '<div style="color:var(--ink3);font-style:italic;font-size:0.85rem;padding:8px 0;">No results found.</div>'; return; }
+  res.innerHTML = results.slice(0, 30).map(r => {
+    const hi = r.text.replace(new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'), '<mark>$1</mark>');
+    return `<div class="search-result-item" onclick="jumpSearch('${r.ds}')">
+      <div class="sri-date">${parseDate(r.ds).toLocaleDateString('en-US',{weekday:'short',year:'numeric',month:'short',day:'numeric'})}</div>
+      <div class="sri-text">${hi.slice(0,120)}${hi.length>120?'…':''}</div>
+    </div>`;
+  }).join('');
+}
+
+function jumpSearch(ds) { jumpToDate(ds); document.getElementById('search-panel').classList.remove('open'); }
+
+function updateWordCount() {
+  const ds = dateStr(currentDate);
+  const all = [...document.querySelectorAll('.row-input')].map(t => t.value).join(' ');
+  const words = all.trim() ? all.trim().split(/\s+/).filter(Boolean).length : 0;
+  document.getElementById('wc-words').textContent = words;
+  document.getElementById('wc-chars').textContent = all.replace(/\s/g,'').length;
+  document.getElementById('wc-rows').textContent  = (entries[ds]||[]).length;
+}
+
+function openExport() { openModal('export-modal'); }
+
+function getExportDates() {
+  const range = document.getElementById('export-range').value;
+  const today = new Date(); today.setHours(0,0,0,0);
+  if (range === 'today') return [dateStr(today)];
+  if (range === 'week') {
+    const dates = [], d = new Date(today); d.setDate(d.getDate() - 6);
+    while (d <= today) { dates.push(dateStr(d)); d.setDate(d.getDate()+1); } return dates;
+  }
+  if (range === 'month') {
+    const dates = [], d = new Date(today.getFullYear(), today.getMonth(), 1);
+    while (d <= today) { dates.push(dateStr(d)); d.setDate(d.getDate()+1); } return dates;
+  }
+  return Object.keys(entries).sort();
+}
+
+function doExport(fmt) {
+  const dates = getExportDates(), lines = [];
+  const moodMap = { '😊':'Happy','😐':'Neutral','😔':'Sad','😤':'Frustrated','🤒':'Unwell','😴':'Tired','🎉':'Excited' };
+  dates.forEach(ds => {
+    const dayEntries = (entries[ds] || []).filter(r => r.text.trim());
+    if (!dayEntries.length && !moods[ds]) return;
+    lines.push(`\n═══ ${parseDate(ds).toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'})} ═══`);
+    if (moods[ds]) lines.push(`Mood: ${moods[ds]} ${moodMap[moods[ds]]||''}`);
+    dayEntries.forEach((r,i) => {
+      const sch = r.scheduleId ? schedules[r.scheduleId] : null;
+      lines.push(`${i+1}. ${r.text}${sch?' ['+sch.type.toUpperCase()+']':''}`);
+    });
+  });
+  if (!lines.length) { toast('No entries to export.'); return; }
+  if (fmt === 'txt') {
+    dlBlob(new Blob([lines.join('\n')], { type: 'text/plain' }), 'josemon-diary-export.txt');
+  } else {
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>JOSEMON'S Diary Export</title><style>body{font-family:Georgia,serif;max-width:700px;margin:40px auto;color:#2c2416;line-height:1.7}h2{font-style:italic}pre{white-space:pre-wrap;font-family:Georgia,serif;font-size:1rem}</style></head><body><h2>JOSEMON'S — My Diary Export</h2><pre>${lines.join('\n').replace(/</g,'&lt;')}</pre></body></html>`;
+    dlBlob(new Blob([html], { type: 'text/html' }), 'josemon-diary-export.html');
+  }
+  closeModal('export-modal');
+  toast('Exported successfully!');
+}
+
+function dlBlob(blob, name) {
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; a.click();
+}
+
+function openSettings() {
+  document.getElementById('dark-toggle').checked = settings.dark;
+  document.getElementById('pin-toggle').checked  = settings.pinEnabled;
+  document.getElementById('pin-setup-area').style.display = settings.pinEnabled ? '' : 'none';
+  openModal('settings-modal');
+}
+
+function toggleDark(on) { settings.dark = on; document.body.classList.toggle('dark', on); save(); }
+function togglePin(on) {
+  settings.pinEnabled = on;
+  document.getElementById('pin-setup-area').style.display = on ? '' : 'none';
+  if (!on) { settings.pin = ''; save(); }
+}
+
+function savePin() {
+  const val = document.getElementById('pin-set-input').value.trim();
+  if (!/^\d{4}$/.test(val)) { toast('PIN must be exactly 4 digits.'); return; }
+  settings.pin = val; save(); toast('PIN saved!');
+}
+
+function clearAllData() {
+  if (!confirm('This will permanently delete ALL diary entries, schedules and settings. Are you sure?')) return;
+  localStorage.clear();
+  entries = {}; schedules = {}; moods = {}; settings = { dark:false, pinEnabled:false, pin:'' };
+  closeModal('settings-modal'); renderPage(); toast('All data cleared.');
+}
+
+let pinEntry = '';
+function showLockScreen() { pinEntry = ''; updatePinDots(); document.getElementById('lock-screen').classList.add('open'); }
+function pinPress(key) {
+  if (key === '⌫') { pinEntry = pinEntry.slice(0,-1); }
+  else if (key === '✓') { checkPin(); return; }
+  else if (pinEntry.length < 4) { pinEntry += key; }
+  updatePinDots();
+  if (pinEntry.length === 4) checkPin();
+}
+function updatePinDots() {
+  for (let i = 0; i < 4; i++) document.getElementById('pd'+i).classList.toggle('filled', i < pinEntry.length);
+}
+function checkPin() {
+  if (pinEntry === settings.pin) {
+    document.getElementById('lock-screen').classList.remove('open');
+    document.getElementById('pin-error').textContent = '';
+  } else {
+    document.getElementById('pin-error').textContent = 'Incorrect PIN. Try again.';
+    pinEntry = ''; updatePinDots();
+  }
+}
+
+function openLightbox(src) { document.getElementById('lightbox-img').src = src; document.getElementById('lightbox').classList.add('open'); }
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.querySelectorAll('.modal-overlay').forEach(ov => {
+  ov.addEventListener('click', e => { if (e.target === ov) ov.classList.remove('open'); });
+});
+
+document.addEventListener('click', e => {
+  const search = document.getElementById('search-panel'), cal = document.getElementById('cal-panel');
+  if (!search.contains(e.target) && !e.target.closest('[onclick="toggleSearch()"]')) search.classList.remove('open');
+  if (!cal.contains(e.target) && !e.target.closest('[onclick="toggleCal()"]') && !e.target.closest('#date-display')) cal.classList.remove('open');
+});
+
+document.addEventListener('keydown', e => {
+  if (document.getElementById('lock-screen').classList.contains('open')) return;
+  if (e.altKey && e.key === 'ArrowLeft')  changeDay(-1);
+  if (e.altKey && e.key === 'ArrowRight') changeDay(1);
+  if (e.altKey && e.key === 'ArrowUp')    goToday();
+  if (e.altKey && e.key === 'n')          addRow();
+});
+
+function init() {
+  load();
+  if (settings.dark) document.body.classList.add('dark');
+  if (settings.pinEnabled && settings.pin) showLockScreen();
+  document.getElementById('sched-yearly-date').value = dateStr(currentDate);
+  renderPage();
+}
+
+init();
+</script>
+</body>
+</html>
